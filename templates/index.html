@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Program</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Platforma de streaming</h1>
+
+    <!-- Afișarea mesajului de confirmare -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="{{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+
+    <!-- Afisarea tabelului pentru Clienti -->
+    {% if clienti %}
+        <h2>Clienți</h2>
+        <table id="clienti-table" border="1">
+            <thead>
+                <tr>
+                    <th>Cod Client</th>
+                    <th>Nume</th>
+                    <th>Prenume</th>
+                    <th>Data Nașterii</th>
+                    <th>Email</th>
+                    <th>Acțiuni</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for client in clienti %}
+                <tr>
+                    <td>{{ client.cod_clienti }}</td>
+                    <td>{{ client.nume }}</td>
+                    <td>{{ client.prenume }}</td>
+                    <td>{{ client.data_nastere }}</td>
+                    <td>{{ client.email }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('sterge_client') }}">
+                            <input type="hidden" name="cod_client" value="{{ client.cod_clienti }}">
+                            <button type="submit">Șterge</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <!-- Buton pentru adăugarea unui client nou -->
+    <button id="adauga-client">Adaugă Client</button>
+
+    <!-- Formular pentru adăugarea unui client nou -->
+    <div id="formular-client" style="display: none;">
+        <h2>Adaugă Client Nou</h2>
+        <form id="formular-adauga-client" method="POST" action="{{ url_for('adauga_client') }}">
+            <label for="cod-client">Cod Client:</label>
+            <input type="text" id="cod-client" name="cod_client" required>
+            <label for="nume">Nume:</label>
+            <input type="text" id="nume" name="nume" required>
+            <label for="prenume">Prenume:</label>
+            <input type="text" id="prenume" name="prenume" required>
+            <label for="data_nastere">Data Nașterii:</label>
+            <input type="date" id="data_nastere" name="data_nastere" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <button type="submit">Adaugă</button>
+        </form>
+    </div>
+
+    <!-- Afisarea tabelului pentru Filme -->
+    {% if filme %}
+    <h2>Filme</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID Film</th>
+                <th>ID Categorie</th>
+                <th>Nume Film</th>
+                <th>Data Lansare</th>
+                <th>Durata</th>
+                <th>Actori</th>
+                <th>Regizor</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for film in filme %}
+            <tr>
+                <td>{{ film.id_articol }}</td>
+                <td>{{ film.id_categorie }}</td>
+                <td>{{ film.nume_film }}</td>
+                <td>{{ film.data_lansare }}</td>
+                <td>{{ film.durata }}</td>
+                <td>{{ film.actori }}</td>
+                <td>{{ film.regizor }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+<!-- Afisarea tabelului pentru Seriale -->
+{% if seriale %}
+    <h2>Seriale</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID Serial</th>
+                <th>ID Categorie</th>
+                <th>Nume Serial</th>
+                <th>Nr. Sezoane</th>
+                <th>Lansare Inițială</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for serial in seriale %}
+            <tr>
+                <td>{{ serial.id_serial }}</td>
+                <td>{{ serial.id_categorie }}</td>
+                <td>{{ serial.nume_serial }}</td>
+                <td>{{ serial.nr_sezoane }}</td>
+                <td>{{ serial.lansare_initiale }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+<h1>Interogări Bază de Date</h1>
+        <div class="query-container">
+            <ul>
+                <li><a href="{{ url_for('query1') }}">Interogare 1: Clienți născuți după 2000 si au in e-mail cuvantul 'example' (intra-tabel)</a></li>
+                <li><a href="{{ url_for('query2') }}">Interogare 2: Filme cu durata mai mare de 120 minute (intra-tabel)</a></li>
+                <li><a href="{{ url_for('query3') }}">Interogare 3: Filme aparute dupa 01-08-1980 care incep cu S (intra-tabel)</a></li>
+                <li><a href="{{ url_for('query4') }}">Interogare 4: Seriale cu mai mult de 2 sezoane (intra-tabel)</a></li>
+                <li><a href="{{ url_for('query5') }}">Interogare 5: Filme din categoria actiune cu regizorul Michael Bay (intra-tabel)</a></li>
+                <li><a href="{{ url_for('query6') }}">Interogare 6: Selectarea serialelor și actorilor din primul sezon al unui serial lansat după  01-01-2022 (inter-tabele)</a></li>
+                <li><a href="{{ url_for('query7') }}">Interogare 7: Selectarea filmelor si serialelor de Animatie (inter-tabele)</a></li>
+                <li><a href="{{ url_for('query8') }}">Interogare 8: Subinterogare care să obțină numele tuturor clientilor care au cel puțin un film înregistrat</a></li>
+                <li><a href="{{ url_for('query9') }}">Interogare 9: Lungimea e-mail.ului (f. scalara)</a></li>
+                <li><a href="{{ url_for('query10') }}">Interogare 10: Numarul total de seriale (f. agregat)</a></li>
+            </ul>
+        </div>
+
+<div class="result-container">
+    {% if query_result %}
+        <h2>Rezultate: {{ query_title }}</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    {% for key in query_result[0].keys() %}
+                        <th>{{ key }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in query_result %}
+                    <tr>
+                        {% for value in row.values() %}
+                            <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+
+<script>
+    document.getElementById('adauga-client').addEventListener('click', function() {
+        document.getElementById('formular-client').style.display = 'block';
+    });
+</script>
+</body>
+</html>
